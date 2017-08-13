@@ -1,6 +1,6 @@
 # CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
-   
+
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases).
 
@@ -38,13 +38,13 @@ Here is the data provided from the Simulator to the C++ Program
 #### Previous path data given to the Planner
 
 //Note: Return the previous list but with processed points removed, can be a nice tool to show how far along
-the path has processed since last time. 
+the path has processed since last time.
 
 ["previous_path_x"] The previous list of x points previously given to the simulator
 
 ["previous_path_y"] The previous list of y points previously given to the simulator
 
-#### Previous path's end s and d values 
+#### Previous path's end s and d values
 
 ["end_path_s"] The previous list's last point's frenet s value
 
@@ -52,7 +52,7 @@ the path has processed since last time.
 
 #### Sensor Fusion Data, a list of all other car's attributes on the same side of the road. (No Noise)
 
-["sensor_fusion"] A 2d vector of cars and then that car's [car's unique ID, car's x position in map coordinates, car's y position in map coordinates, car's x velocity in m/s, car's y velocity in m/s, car's s position in frenet coordinates, car's d position in frenet coordinates. 
+["sensor_fusion"] A 2d vector of cars and then that car's [car's unique ID, car's x position in map coordinates, car's y position in map coordinates, car's x velocity in m/s, car's y velocity in m/s, car's s position in frenet coordinates, car's d position in frenet coordinates.
 
 ## Details
 
@@ -82,7 +82,7 @@ A really helpful resource for doing this project and creating smooth trajectorie
   * Run either `install-mac.sh` or `install-ubuntu.sh`.
   * If you install from source, checkout to commit `e94b6e1`, i.e.
     ```
-    git clone https://github.com/uWebSockets/uWebSockets 
+    git clone https://github.com/uWebSockets/uWebSockets
     cd uWebSockets
     git checkout e94b6e1
     ```
@@ -134,3 +134,30 @@ that's just a guess.
 
 One last note here: regardless of the IDE used, every submitted project must
 still be compilable with cmake and make./
+
+## Model Documentation
+Video example: [https://www.youtube.com/watch?v=AnvF27pwkvQ](https://www.youtube.com/watch?v=AnvF27pwkvQ)
+
+### Constraints
+- Min velocity is 0
+- Max velocity is 50
+- Safe distance from vehicles ahead of the car is 30
+- Safe distance from vehicles behind the car(in other lanes) is 20
+- Acceleration is .224
+
+### Lane selection
+Based on sensor fusion data, the distance for closest vehicle in every lane is beign computed. For current lane only vehicles in from of the car are considered.
+If the distance for the closest vehicle is smaller than the safe distance, the lane is marked as busy.
+
+If the current lane is not busy, the car stays at the lane and increasing the velocity with positive acceleration.
+
+If current lane is busy, the car is starting slowing down with negative acceleration.
+If the lane on the left or right is not busy, lane is changed.
+For left and right lanes  only middle lane is considered to keep the car on the road and not to drive against the flow.
+The car can change only to the closest lane, not skipping one.
+
+### Trajectory generation
+For chosen lane, few waypoits are generated and spline is fitted. After that additional waypoints are generated on the same spline.
+
+### Lane smoothing
+To smooth the transition between frames, few last points from previous frame is used as a beginning of a trajectory for current frame.
